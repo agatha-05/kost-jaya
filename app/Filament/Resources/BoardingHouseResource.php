@@ -155,7 +155,8 @@ class BoardingHouseResource extends Resource
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('price')
-                    ->money('idr', true)
+                    ->label('Harga')
+                    ->prefix('Rp ')
                     ->sortable(),
             ])
             ->filters([

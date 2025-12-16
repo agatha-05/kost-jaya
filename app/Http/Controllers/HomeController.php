@@ -27,6 +27,9 @@ class HomeController extends Controller
 
         $categories = $this->categoryRepository->getAllCategories();
         $popularBoardingHouses = $this->boardingHouseRepository->getPopularBoardingHouses();
-        return view('pages.home', compact('categories', 'popularBoardingHouses'));
+        $cities = $this->cityRepository->getAllCities();
+        $boardingHouse = $this->boardingHouseRepository->getAllBoardingHouses();
+
+        return view('pages.home', compact('categories', 'popularBoardingHouses', 'cities', 'boardingHouse'));
     }
 }
