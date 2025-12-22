@@ -15,8 +15,8 @@ class BoardingHouse extends Model
         'name',
         'slug',
         'thumbnail',
-        'city_id',
-        'category_id',
+        'city_id',        // ✅ FIX
+        'category_id',    // ✅ FIX
         'description',
         'price',
         'address',
@@ -28,7 +28,9 @@ class BoardingHouse extends Model
         'category_id' => 'integer',
     ];
 
-    // OPTIONAL: Auto-generate slug if empty
+    /**
+     * Auto generate slug
+     */
     protected static function boot()
     {
         parent::boot();
@@ -40,16 +42,16 @@ class BoardingHouse extends Model
         });
     }
 
-    // ===== RELATIONS =====
+    // ================= RELATIONS =================
 
     public function city()
     {
-        return $this->belongsTo(City::class);
+        return $this->belongsTo(City::class, 'city_id');
     }
 
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
     public function rooms()

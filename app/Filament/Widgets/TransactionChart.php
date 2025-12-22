@@ -8,19 +8,19 @@ use Carbon\Carbon;
 
 class TransactionChart extends ChartWidget
 {
-    // Menggunakan kolom penuh (full column) agar grafik lebih lebar
+
     protected int | string | array $columnSpan = 'full'; 
     protected static ?string $heading = 'Tren Transaksi (6 Bulan Terakhir)';
-    protected static ?int $sort = 2; // Agar tampil setelah Stats Widget
+    protected static ?int $sort = 2; 
 
     protected function getData(): array
     {
-        // 1. Definisikan periode dan label (6 bulan terakhir)
+        
         $months = collect(range(5, 0))->map(function (int $i) {
             return Carbon::now()->subMonths($i);
         });
 
-        // 2. Ambil data transaksi per bulan (menggunakan payment_status yang benar)
+        
         $data = $months->map(function (Carbon $month) {
             return Transaction::whereMonth('created_at', $month->month)
                 ->whereYear('created_at', $month->year)
@@ -29,7 +29,7 @@ class TransactionChart extends ChartWidget
                 ->count();
         });
 
-        // 3. Gabungkan data ke dalam format chart
+        
         return [
             'datasets' => [
                 [
@@ -39,13 +39,13 @@ class TransactionChart extends ChartWidget
                     'borderColor' => '#36A2EB',
                 ],
             ],
-            // Membuat label bulan (misal: Des, Nov, Okt, dst.)
+          
             'labels' => $months->map(fn (Carbon $month) => $month->shortMonthName)->toArray(),
         ];
     }
 
     protected function getType(): string
     {
-        return 'line'; // Grafik Garis
+        return 'line'; 
     }
 }
