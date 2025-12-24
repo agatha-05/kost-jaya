@@ -28,4 +28,6 @@ interface BoardingHouseRepositoryInterface
      * Ambil detail boarding house berdasarkan slug
      */
     public function getBoardingHouseBySlug($slug);
+
+    public function getBoardingHouseRoomById($id);
 }
