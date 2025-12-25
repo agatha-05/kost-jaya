@@ -19,6 +19,8 @@ class CustomerInformationStoreRequest extends FormRequest
             'name' => 'required|string',
             'email' => 'required|email',
             'phone' => 'required|string',
+            'duration' => 'required',
+            'start_date' => 'required',
         ];
     }
 }
