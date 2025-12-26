@@ -25,6 +25,8 @@ Route::post('/kos/booking/{slug}/information/save', [BookingController::class, '
 
 Route::get('/kos/booking/{slug}/checkout', [BookingController::class, 'checkout'])->name('booking.checkout');
 
+Route::post('/kos/booking/{slug}/payment', [BookingController::class, 'payment'])->name('booking.payment');
+
 Route::get('/find-kos', [BoardingHouseController::class, 'find'])->name('find-kos');
 
 Route::get('/find-results', [BoardingHouseController::class, 'findResults'])->name('find-kos.results');

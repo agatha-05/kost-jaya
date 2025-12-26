@@ -4,7 +4,7 @@
             class="absolute top-0 w-full h-[230px] rounded-b-[75px] bg-[linear-gradient(180deg,#F2F9E6_0%,#D2EDE4_100%)]">
         </div>
         <div id="TopNav" class="relative flex items-center justify-between px-5 mt-[60px]">
-            <a href="cust-info.html"
+            <a href="{{ Route('booking.information', $boardingHouse->slug) }}"
                 class="w-12 h-12 flex items-center justify-center shrink-0 rounded-full overflow-hidden bg-white">
                 <img src="{{ asset('assets/images/icons/arrow-left.svg') }}" class="w-[28px] h-[28px]" alt="icon">
             </a>
@@ -84,7 +84,7 @@
                         <img src="{{ asset('assets/images/icons/call.svg') }}" class="w-6 h-6 flex shrink-0" alt="icon">
                         <p class="text-ngekos-grey">Phone</p>
                     </div>
-                    <p class="font-semibold">{{  $transaction['phone']  }}</p>
+                    <p class="font-semibold">{{  $transaction['phone_number']  }}</p>
                 </div>
             </div>
         </div>
@@ -119,17 +119,20 @@
                         <img src="{{ asset('assets/images/icons/calendar.svg') }}" class="w-6 h-6 flex shrink-0" alt="icon">
                         <p class="text-ngekos-grey">Ended At</p>
                     </div>
-                    <p class="font-semibold">10 Maret 2024</p>
+                    <p class="font-semibold">
+                        {{ \Carbon\Carbon::parse($transaction['start_date'])->addMonths(intval($transaction['duration'])) ->isoformat('D MMMM YYYY') }}
+                    </p>
                 </div>
             </div>
         </div>
-        <form action="success-booking.html" class="relative flex flex-col gap-6 mt-5 pt-5">
+        <form action="{{ route('booking.payment', $boardingHouse->slug) }}" class="relative flex flex-col gap-6 mt-5 pt-5" method="POST">
+            @csrf
             <div id="PaymentOptions" class="flex flex-col rounded-[30px] border border-[#F1F2F6] p-5 gap-4 mx-5">
                 <div id="TabButton-Container"
                     class="flex items-center justify-between border-b border-[#F1F2F6] gap-[18px]">
                     <label class="tab-link group relative flex flex-col justify-between gap-4"
                         data-target-tab="#DownPayment-Tab">
-                        <input type="radio" name="Payment" value="down"
+                        <input type="radio" name="payment_method" value="down_payment"
                             class="absolute -z-10 top-1/2 left-1/2 opacity-0" checked>
                         <div class="flex items-center gap-3 mx-auto">
                             <div class="relative w-6 h-6">
@@ -149,7 +152,7 @@
                     <div class="flex h-6 w-[1px] border border-[#F1F2F6] mb-auto"></div>
                     <label class="tab-link group relative flex flex-col justify-between gap-4"
                         data-target-tab="#FullPayment-Tab">
-                        <input type="radio" name="Payment" value="full"
+                        <input type="radio" name="payment_method" value="full_payment"
                             class="absolute -z-10 top-1/2 left-1/2 opacity-0">
                         <div class="flex items-center gap-3 mx-auto">
                             <div class="relative w-6 h-6">
@@ -168,6 +171,13 @@
                     </label>
                 </div>
                 <div id="TabContent-Container">
+                    @php
+                        $subtotal = $room->price_per_month * $transaction['duration'];
+                        $tax = $subtotal * 0.11;
+                        $insurance = $subtotal * 0.1;
+                        $total = $subtotal + $tax + $insurance;
+                        $downPayment = $total * 0.3;
+                    @endphp
                     <div id="DownPayment-Tab" class="tab-content flex flex-col gap-4">
                         <p class="text-sm text-ngekos-grey">Anda perlu melunasi pembayaran secara cash setelah melakukan
                             survey koskos</p>
@@ -183,7 +193,9 @@
                                 <img src="{{ asset('assets/images/icons/receipt-2.svg') }}" class="w-6 h-6 flex shrink-0" alt="icon">
                                 <p class="text-ngekos-grey">Sub Total</p>
                             </div>
-                            <p class="font-semibold">Rp 69.390.493</p>
+                            <p class="font-semibold">
+                                Rp  {{ number_format($subtotal, 0, ',', '.') }}
+                            </p>
                         </div>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
@@ -191,7 +203,9 @@
                                     alt="icon">
                                 <p class="text-ngekos-grey">PPN 11%</p>
                             </div>
-                            <p class="font-semibold">Rp 24.495.392</p>
+                            <p class="font-semibold">
+                                Rp {{ number_format($tax, 0, ',', '.') }}
+                            </p>
                         </div>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
@@ -199,7 +213,9 @@
                                     alt="icon">
                                 <p class="text-ngekos-grey">Insurance</p>
                             </div>
-                            <p class="font-semibold">Rp 890.000</p>
+                            <p class="font-semibold">
+                                Rp {{ number_format($insurance, 0, ',', '.') }}
+                            </p>
                         </div>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
@@ -207,7 +223,9 @@
                                     alt="icon">
                                 <p class="text-ngekos-grey">Grand total (30%)</p>
                             </div>
-                            <p id="downPaymentPrice" class="font-semibold">Rp 19.495.499</p>
+                            <p id="downPaymentPrice" class="font-semibold">
+                                Rp {{ number_format($downPayment, 0, ',', '.') }}
+                            </p>
                         </div>
                     </div>
                     <div id="FullPayment-Tab" class="tab-content flex flex-col gap-4 hidden">
