@@ -243,7 +243,7 @@
                                 <img src="{{ asset('assets/images/icons/receipt-2.svg') }}" class="w-6 h-6 flex shrink-0" alt="icon">
                                 <p class="text-ngekos-grey">Sub Total</p>
                             </div>
-                            <p class="font-semibold">Rp 69.390.493</p>
+                            <p class="font-semibold">Rp {{ number_format($subtotal, 0, ',', '.') }} </p>
                         </div>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
@@ -251,7 +251,7 @@
                                     alt="icon">
                                 <p class="text-ngekos-grey">PPN 11%</p>
                             </div>
-                            <p class="font-semibold">Rp 24.495.392</p>
+                            <p class="font-semibold">Rp {{ number_format($tax, 0, ',', '.') }}</p>
                         </div>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
@@ -259,7 +259,7 @@
                                     alt="icon">
                                 <p class="text-ngekos-grey">Insurance</p>
                             </div>
-                            <p class="font-semibold">Rp 890.000</p>
+                            <p class="font-semibold">Rp {{ number_format($insurance, 0, ',', '.') }}</p>
                         </div>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
@@ -267,7 +267,7 @@
                                     alt="icon">
                                 <p class="text-ngekos-grey">Grand total</p>
                             </div>
-                            <p id="fullPaymentPrice" class="font-semibold">Rp 248.495.499</p>
+                            <p id="fullPaymentPrice" class="font-semibold">Rp {{ number_format($total, 0, ',', '.') }}</p>
                         </div>
                     </div>
                 </div>
