@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BookingShowRequest;
 use App\Http\Requests\CustomerInformationStoreRequest;
 use App\Interfaces\BoardingHouseRepositoryInterface;
 use App\Interfaces\TransactionRepositoryInterface;
@@ -23,9 +24,9 @@ class BookingController extends Controller
     public function booking(Request $request, $slug)
     {
         $this->transactionRepository->saveTransactionDataToSession($request->all());
-
         return redirect()->route('booking.information', $slug);
     }
+
     public function information($slug)
     {
         $transaction = $this->transactionRepository->getTransactionDataFromSession();
@@ -33,15 +34,12 @@ class BookingController extends Controller
         $room = $this->boardingHouseRepository->getBoardingHouseRoomById($transaction['room_id']);
 
         return view('pages.booking.information', compact('transaction', 'boardingHouse', 'room'));
-
     }
 
     public function saveInformation(CustomerInformationStoreRequest $request, $slug)
     {
         $data = $request->validated();
-
         $this->transactionRepository->saveTransactionDataToSession($data);
-
         return redirect()->route('booking.checkout', $slug);
     }
 
@@ -49,24 +47,19 @@ class BookingController extends Controller
     {
         $transaction = $this->transactionRepository->getTransactionDataFromSession();
         $boardingHouse = $this->boardingHouseRepository->getBoardingHouseBySlug($slug);
-        $room = $this->boardingHouseRepository->getBoardingHouseRoomById($transaction['room_id']);
+        $room = $this-> boardingHouseRepository->getBoardingHouseRoomById($transaction['room_id']);
 
         return view('pages.booking.checkout', compact('transaction', 'boardingHouse', 'room'));
-    } 
+    }
 
-    public function payment(Request $request) 
+    public function payment(Request $request)
     {
         $this->transactionRepository->saveTransactionDataToSession($request->all());
-
         $transaction = $this->transactionRepository->saveTransaction($this->transactionRepository->getTransactionDataFromSession());
 
-        // Set your Merchant Server Key
         \Midtrans\Config::$serverKey = config('midtrans.serverkey');
-        // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
         \Midtrans\Config::$isProduction = config('midtrans.isProduction');
-        // Set sanitization on (default)
         \Midtrans\Config::$isSanitized = config('midtrans.isSanitized');
-        // Set 3DS transaction for credit card to true
         \Midtrans\Config::$is3ds = config('midtrans.is3ds');
 
         $params = [
@@ -83,18 +76,44 @@ class BookingController extends Controller
 
         $paymentUrl = \Midtrans\Snap::createTransaction($params)->redirect_url;
         return redirect($paymentUrl);
-    }   
-
-
+    }
 
     public function success(Request $request)
     {
-        $transaction_ = $this->transactionRepository->getTransactionByCode($request->order_id);
-        return view('pages.booking.success', compact('transaction'));   
+        // PERBAIKAN: Hapus tanda kutip pada $request->order_id
+        $transaction = $this->transactionRepository->getTransactionByCode($request->order_id);
+
+        if(!$transaction) {
+            return redirect()->route('home')->with('error', 'Transaksi tidak ditemukan.');
+        }   
+        return view('pages.booking.success', compact('transaction'));
+    }
+
+    // METHOD BARU: Untuk menerima notifikasi otomatis dari Midtrans
+    public function callback(Request $request)
+    {
+        $serverKey = config('midtrans.serverkey');
+        $hashed = hash("sha512", $request->order_id . $request->status_code . $request->gross_amount . $serverKey);
+
+        if ($hashed == $request->signature_key) {
+            if ($request->transaction_status == 'capture' || $request->transaction_status == 'settlement') {
+                $transaction = $this->transactionRepository->getTransactionByCode($request->order_id);
+                if ($transaction) {
+                    $transaction->update([
+                        'payment_status' => 'completed'
+                    ]);
+                }
+            }
+        }
     }
 
     public function check()
     {
         return view('pages.check-booking');
     }
-}
+
+    public function show(BookingShowRequest $request)
+    {
+        
+    }
+}    

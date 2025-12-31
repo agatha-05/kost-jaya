@@ -14,6 +14,7 @@ use App\Interfaces\BoardingHouseRepositoryInterface;
 use App\Repositories\CityRepository;
 use App\Repositories\CategoryRepository;
 use App\Repositories\BoardingHouseRepository;
+use Illuminate\Support\Facades\URL;
 
 
 class AppServiceProvider extends ServiceProvider
@@ -39,6 +40,8 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        //
+        if (str_contains(request()->url(), 'ngrok-free.dev')){
+            URL::forceScheme('https'); 
+        }
     }
 }

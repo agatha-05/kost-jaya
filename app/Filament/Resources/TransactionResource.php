@@ -115,28 +115,31 @@ class TransactionResource extends Resource
                     ->label('Penyewa')
                     ->searchable(),
 
-                // Badge warna status
-                Tables\Columns\BadgeColumn::make('payment_method')
+                // Update: Menggunakan TextColumn + badge() untuk menggantikan BadgeColumn yang deprecated
+                Tables\Columns\TextColumn::make('payment_method')
                     ->label('Metode')
-                    ->colors([
-                        'primary',
-                        'warning' => 'down_payment',
-                        'success' => 'full_payment',
-                    ])
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'down_payment' => 'warning',
+                        'full_payment' => 'success',
+                        default => 'gray',
+                    })
                     ->formatStateUsing(fn($state) => ucfirst(str_replace('_', ' ', $state))),
 
-                Tables\Columns\BadgeColumn::make('payment_status')
+                Tables\Columns\TextColumn::make('payment_status')
                     ->label('Status')
-                    ->colors([
-                        'warning' => 'pending',
-                        'success' => 'completed',
-                        'danger' => 'failed',
-                    ])
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'pending' => 'warning',
+                        'completed' => 'success',
+                        'failed' => 'danger',
+                        default => 'gray',
+                    })
                     ->formatStateUsing(fn($state) => ucfirst($state)),
 
                 Tables\Columns\TextColumn::make('total_amount')
                     ->label('Total')
-                    ->money('idr', true)
+                    ->money('idr', locale: 'id')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('transaction_date')

@@ -28,21 +28,23 @@ class TransactionRepository implements TransactionRepositoryInterface
         $room = Room::find($data['room_id']);
         $data = $this->prepareTransactionData($data, $room);
         $transaction = Transaction::create($data);
-
+ 
         session()->forget('transaction');
         return $transaction;
-    }
+    } 
 
     public function getTransactionByCode($code)
-    {
-        return Transaction::where('code', $code)->first();
-    }
+{
+    return Transaction::with(['boardingHouse.city', 'room'])
+        ->where('code', $code)
+        ->first();
+}
 
     private function prepareTransactionData($data, $room)
     {
         $data['code'] = $this->generateTransactionCode();
         $data['payment_status'] = 'pending';
-        $daata['transaction_date'] = now();
+        $data['transaction_date'] = now(); // Pastikan variabelnya $data (bukan $daata)
 
         $total = $this->calculateTotalAmount($room->price_per_month, $data['duration']);
         $data['total_amount'] = $this->calculatePaymentAmount($total, $data['payment_method']);
@@ -52,7 +54,7 @@ class TransactionRepository implements TransactionRepositoryInterface
 
     private function generateTransactionCode()
     {
-        return 'NGKBWA' . rand(100000, 999999);
+        return 'THA' . rand(100000, 999999);
     }
 
     private function calculateTotalAmount($pricePerMonth, $duration)

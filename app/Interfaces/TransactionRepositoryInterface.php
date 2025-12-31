@@ -10,6 +10,6 @@ interface TransactionRepositoryInterface
 
     public function saveTransaction($data);
 
-    public function getTransactionByCode($data);
+    public function getTransactionByCode($code);
 
 }
