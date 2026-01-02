@@ -162,3 +162,20 @@
 
         @include('includes.navigation')
 @endsection
+@section('scripts')
+<script>
+    let lastScrollY = window.scrollY;
+    const bottomNav = document.getElementById('bottomNav');
+
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > lastScrollY) {
+            // scroll ke bawah → hide
+            bottomNav.classList.add('translate-y-full');
+        } else {
+            // scroll ke atas → show
+            bottomNav.classList.remove('translate-y-full');
+        }
+        lastScrollY = window.scrollY;
+    });
+</script>
+@endsection
