@@ -9,6 +9,8 @@ use App\Http\Controllers\HomeController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+Route::get('/categories', [CategoryController::class, 'index'])->name('all-categories');
+
 Route::get('/category/{slug}', [CategoryController::class, 'show'])->name('category.show');
 
 Route::get('/city/{slug}', [CityController::class, 'show'])->name('city.show');
