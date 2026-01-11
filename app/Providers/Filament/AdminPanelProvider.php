@@ -30,122 +30,91 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->font('Plus Jakarta Sans')
             ->colors([
-                'primary' => Color::Cyan, // Warna Cyan Elektrik
+                'primary' => Color::Cyan, 
                 'gray' => Color::Slate,
             ])
+            // Mengaktifkan Dark Mode secara default agar UI tetap konsisten
+            ->darkMode(true)
             ->renderHook(
-                'panels::auth.login.before',
+                'panels::head.done',
                 fn () => Blade::render('
                     <style>
-                        /* 1. Animasi Mesh Gradient Background */
-                        body {
+                        /* 1. GLOBAL BACKGROUND (Dashboard & Sidebar) */
+                        .fi-layout, .fi-sidebar, .fi-topbar, .fi-main {
                             background: #020617 !important;
-                            overflow: hidden;
                         }
 
-                        body::after {
+                        /* Efek Cahaya di belakang (Ambient Light) */
+                        body::before {
                             content: "";
-                            position: absolute;
-                            width: 150%;
-                            height: 150%;
-                            top: -25%;
-                            left: -25%;
-                            background: radial-gradient(circle at 20% 30%, rgba(34, 211, 238, 0.15) 0%, transparent 40%),
-                                        radial-gradient(circle at 80% 70%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
-                                        radial-gradient(circle at 50% 10%, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
-                            animation: meshMove 20s ease infinite alternate;
-                            z-index: -2;
-                        }
-
-                        @keyframes meshMove {
-                            0% { transform: translate(0, 0) rotate(0deg); }
-                            100% { transform: translate(5%, 5%) rotate(5deg); }
-                        }
-
-                        /* 2. Login Card Styling (Futuristic Floating) */
-                        .fi-admin-auth-login-box {
-                            background: rgba(15, 23, 42, 0.4) !important;
-                            backdrop-filter: blur(40px) saturate(180%) !important;
-                            -webkit-backdrop-filter: blur(40px) saturate(180%) !important;
-                            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                            border-radius: 3rem !important;
-                            box-shadow: 0 0 80px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.05) !important;
-                            padding: 3rem !important;
-                            position: relative;
-                        }
-
-                        /* Glowing Border Effect */
-                        .fi-admin-auth-login-box::before {
-                            content: "";
-                            position: absolute;
-                            inset: -1px;
-                            border-radius: 3rem;
-                            padding: 1px;
-                            background: linear-gradient(135deg, rgba(34, 211, 238, 0.5), transparent, rgba(99, 102, 241, 0.5));
-                            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-                            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-                            -webkit-mask-composite: xor;
-                            mask-composite: exclude;
+                            position: fixed;
+                            top: 0; left: 0; width: 100%; height: 100%;
+                            background: radial-gradient(circle at 10% 10%, rgba(34, 211, 238, 0.05) 0%, transparent 50%),
+                                        radial-gradient(circle at 90% 90%, rgba(99, 102, 241, 0.05) 0%, transparent 50%);
                             pointer-events: none;
+                            z-index: 0;
                         }
 
-                        /* 3. Logo Typography (Hyper Digital) */
-                        .fi-logo {
-                            font-size: 2.8rem !important;
-                            font-weight: 800 !important;
-                            letter-spacing: -2px !important;
-                            color: white !important;
-                            text-shadow: 0 0 20px rgba(34, 211, 238, 0.6) !important;
-                            display: flex;
-                            justify-content: center;
+                        /* 2. SIDEBAR CUSTOMIZATION */
+                        .fi-sidebar {
+                            border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+                            backdrop-filter: blur(10px);
                         }
 
-                        /* 4. Form Controls (Cyberpunk Style) */
-                        .fi-input-wrapper {
-                            background: rgba(2, 6, 23, 0.6) !important;
-                            border: 1px solid rgba(255, 255, 255, 0.05) !important;
-                            border-radius: 1.25rem !important;
-                            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                        }
-
-                        .fi-input-wrapper:focus-within {
-                            border-color: #22d3ee !important;
-                            box-shadow: 0 0 20px rgba(34, 211, 238, 0.2) !important;
-                            transform: scale(1.02);
-                        }
-
-                        /* 5. Submit Button (Glass-Liquid Style) */
-                        button[type="submit"] {
-                            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%) !important;
-                            box-shadow: 0 10px 30px -10px rgba(6, 182, 212, 0.5) !important;
-                            border-radius: 1.25rem !important;
-                            height: 3.5rem !important;
-                            font-size: 1rem !important;
-                            font-weight: 700 !important;
-                            text-transform: uppercase !important;
-                            letter-spacing: 2px !important;
+                        /* Sidebar Item (Navigasi) */
+                        .fi-sidebar-item-button {
+                            border-radius: 12px !important;
+                            margin: 4px 8px !important;
                             transition: all 0.3s ease !important;
                         }
 
-                        button[type="submit"]:hover {
-                            box-shadow: 0 15px 40px -10px rgba(6, 182, 212, 0.7) !important;
-                            transform: translateY(-3px) scale(1.03);
-                            filter: brightness(1.1);
-                        }
-
-                        button[type="submit"]:active {
-                            transform: scale(0.98);
-                        }
-
-                        /* 6. Text Links */
-                        .fi-link {
-                            color: rgba(255, 255, 255, 0.5) !important;
-                            font-size: 0.85rem !important;
-                            transition: color 0.3s ease;
-                        }
-
-                        .fi-link:hover {
+                        /* Item Aktif (Glowing Indigo) */
+                        .fi-sidebar-item-active {
+                            background: linear-gradient(90deg, rgba(34, 211, 238, 0.1) 0%, transparent 100%) !important;
+                            border-left: 3px solid #22d3ee !important;
                             color: #22d3ee !important;
+                        }
+
+                        /* 3. CARD & WIDGET (Glassmorphism di Dashboard) */
+                        .fi-wi-stats-overview-stat, .fi-card {
+                            background: rgba(15, 23, 42, 0.6) !important;
+                            backdrop-filter: blur(20px) !important;
+                            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+                            border-radius: 20px !important;
+                            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5) !important;
+                        }
+
+                        /* 4. TOPBAR (Header) */
+                        .fi-topbar {
+                            background: rgba(2, 6, 23, 0.8) !important;
+                            backdrop-filter: blur(10px) !important;
+                            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+                        }
+
+                        /* 5. LOGIN PAGE SPECIFIC (Hanya muncul di login) */
+                        .fi-admin-auth-login-box {
+                            background: rgba(15, 23, 42, 0.4) !important;
+                            backdrop-filter: blur(40px) saturate(180%) !important;
+                            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                            border-radius: 3rem !important;
+                            box-shadow: 0 0 80px rgba(0, 0, 0, 0.5) !important;
+                        }
+
+                        .fi-logo {
+                            font-size: 2.5rem !important;
+                            font-weight: 800 !important;
+                            text-shadow: 0 0 20px rgba(34, 211, 238, 0.4) !important;
+                        }
+
+                        button[type="submit"] {
+                            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%) !important;
+                            border-radius: 1rem !important;
+                            transition: all 0.3s ease !important;
+                        }
+                        
+                        button[type="submit"]:hover {
+                            transform: translateY(-2px);
+                            box-shadow: 0 10px 25px -5px rgba(6, 182, 212, 0.5) !important;
                         }
                     </style>
                 ')
